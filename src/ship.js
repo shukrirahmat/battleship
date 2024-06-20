@@ -1,4 +1,4 @@
-function Ship(length) {
+function Ship(length, vertical = false) {
   let hitsTaken = 0;
 
   function hit() {
@@ -9,9 +9,14 @@ function Ship(length) {
     return hitsTaken >= length;
   }
 
+  function isVertical() {
+    return vertical;
+  }
+
   return {
     hit,
     isSunk,
+    isVertical
   };
 }
 
