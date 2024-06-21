@@ -13,8 +13,12 @@ function Ship(length, vertical = false) {
     return vertical;
   }
 
+  function getLength() {
+    return length;
+  }
+
   return {
-    length,
+    getLength,
     hit,
     isSunk,
     isVertical

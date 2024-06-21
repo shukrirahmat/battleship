@@ -1,7 +1,8 @@
-function Gameboard() {
-  let boardMatrix = Array.from(Array(16), () => []);
+function Gameboard(size) {
+
+  let boardMatrix = Array.from(Array(size), () => []);
   boardMatrix.forEach((element, i) => {
-    for (let j = 0; j < 16; j++) {
+    for (let j = 0; j < size; j++) {
       element.push(createGrid(i, j));
     }
   });
@@ -14,23 +15,23 @@ function Gameboard() {
   }
 
   function placeShip(ship, [x, y]) {
-    let n = 0;
+    let locations = [];
 
-    if (ship.isVertical()) {
-      if (ship.length + x > 16) throw new Error("Out of bound placement");
-      while (n < ship.length) {
-        let ypos = y + n;
-        boardMatrix[x][ypos].ship = ship;
-        n++;
-      }
-    } else {
-      if (ship.length + y > 16) throw new Error("Out of bound placement");
-      while (n < ship.length) {
-        let xpos = x + n;
-        boardMatrix[xpos][y].ship = ship;
-        n++;
+    for (let n = 0; n < ship.getLength(); n++) {
+      if (ship.isVertical()) {
+        if (y + n >= size) throw new Error("Out of Bound");
+        if (boardMatrix[x][y + n].ship !== null)
+          throw new Error("Grid already occupied");
+        locations.push([x, y + n]);
+      } else {
+        if (x + n >= size) throw new Error("Out of Bound");
+        if (boardMatrix[x + n][y].ship !== null)
+          throw new Error("Grid already occupied");
+        locations.push([x + n, y]);
       }
     }
+
+    locations.forEach(l => (boardMatrix[l[0]][l[1]].ship = ship));
   }
 
   function receiveAttack([x, y]) {
