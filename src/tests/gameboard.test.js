@@ -21,7 +21,7 @@ describe("out of bound errors", () => {
 });
 
 describe("occupied error", () => {
-  const gameboard = Gameboard(2)
+  const gameboard = Gameboard(2);
   const ship_1 = Ship(1);
   const ship_2 = Ship(2);
   gameboard.placeShip(ship_1, [1, 1]);
@@ -87,17 +87,38 @@ describe("length 2 ship receiving hit", () => {
 
 describe("targetting already hit grid error", () => {
   const gameboard = Gameboard(2);
-  const ship = Ship(1)
-  gameboard.placeShip(ship, [1,1]);
-  gameboard.receiveAttack([0,0]);
-  gameboard.receiveAttack([1,1]);
+  const ship = Ship(1);
+  gameboard.placeShip(ship, [1, 1]);
+  gameboard.receiveAttack([0, 0]);
+  gameboard.receiveAttack([1, 1]);
 
   test("error without ship", () => {
-    expect(() => gameboard.receiveAttack([0,0])).toThrow();
-  })
+    expect(() => gameboard.receiveAttack([0, 0])).toThrow();
+  });
 
   test("error with ship", () => {
-    expect(() => gameboard.receiveAttack([1,1])).toThrow();
-  })
+    expect(() => gameboard.receiveAttack([1, 1])).toThrow();
+  });
+});
 
-})
+describe("All sunk test", () => {
+  const gameboard = Gameboard(2);
+  const ship_1 = Ship(1);
+  const ship_2 = Ship(1);
+  gameboard.placeShip(ship_1, [0, 0]);
+  gameboard.placeShip(ship_2, [1, 1]);
+
+  test("none sunk", () => {
+    expect(gameboard.isAllSunk()).toBe(false);
+  });
+
+  test("only one sunk", () => {
+    gameboard.receiveAttack([0, 0]);
+    expect(gameboard.isAllSunk()).toBe(false);
+  });
+
+  test("all sunk", () => {
+    gameboard.receiveAttack([1, 1]);
+    expect(gameboard.isAllSunk()).toBe(true);
+  });
+});

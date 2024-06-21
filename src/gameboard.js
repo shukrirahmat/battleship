@@ -1,10 +1,17 @@
 function Gameboard(size) {
-  let boardMatrix = Array.from(Array(size), () => []);
-  boardMatrix.forEach((element, i) => {
-    for (let j = 0; j < size; j++) {
-      element.push(createGrid(i, j));
-    }
-  });
+  let boardMatrix = createBoard();
+  let shiplist = [];
+
+  function createBoard() {
+    let board = Array.from(Array(size), () => []);
+    board.forEach((element, i) => {
+      for (let j = 0; j < size; j++) {
+        element.push(createGrid(i, j));
+      }
+    });
+
+    return board;
+  }
 
   function createGrid(x, y) {
     let ship = null;
@@ -31,6 +38,17 @@ function Gameboard(size) {
     }
 
     locations.forEach((l) => (boardMatrix[l[0]][l[1]].ship = ship));
+    shiplist.push(ship);
+  }
+
+  function isAllSunk() {
+    if (shiplist.length === 0) return true;
+
+    let result = true
+    shiplist.forEach((ship) => {
+      if (!ship.isSunk()) result = false;
+    })
+    return result;
   }
 
   function receiveAttack([x, y]) {
@@ -43,6 +61,7 @@ function Gameboard(size) {
   return {
     placeShip,
     receiveAttack,
+    isAllSunk
   };
 }
 
