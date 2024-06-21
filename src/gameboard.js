@@ -1,5 +1,4 @@
 function Gameboard(size) {
-
   let boardMatrix = Array.from(Array(size), () => []);
   boardMatrix.forEach((element, i) => {
     for (let j = 0; j < size; j++) {
@@ -31,12 +30,14 @@ function Gameboard(size) {
       }
     }
 
-    locations.forEach(l => (boardMatrix[l[0]][l[1]].ship = ship));
+    locations.forEach((l) => (boardMatrix[l[0]][l[1]].ship = ship));
   }
 
   function receiveAttack([x, y]) {
-    let grid = boardMatrix[x][y];
-    return !(grid.ship === null);
+    let target = boardMatrix[x][y];
+    if (target.isHit) throw new Error("Grid already hit");
+    if (target.ship !== null) target.ship.hit();
+    target.isHit = true;
   }
 
   return {
