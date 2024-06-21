@@ -14,6 +14,7 @@ function Ship(length, vertical = false) {
   }
 
   return {
+    length,
     hit,
     isSunk,
     isVertical
