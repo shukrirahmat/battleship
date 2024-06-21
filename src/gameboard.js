@@ -17,16 +17,16 @@ function Gameboard() {
     let n = 0;
 
     if (ship.isVertical()) {
+      if (ship.length + x > 16) throw new Error("Out of bound placement");
       while (n < ship.length) {
         let ypos = y + n;
-        if (ypos > 15) throw new Error("out of bound placement");
         boardMatrix[x][ypos].ship = ship;
         n++;
       }
     } else {
+      if (ship.length + y > 16) throw new Error("Out of bound placement");
       while (n < ship.length) {
         let xpos = x + n;
-        if (xpos > 15) throw new Error("out of bound placement");
         boardMatrix[xpos][y].ship = ship;
         n++;
       }
