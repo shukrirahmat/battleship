@@ -53,7 +53,7 @@ describe("length 1 ship receiving hit", () => {
     expect(ship.isSunk()).toBe(false);
   });
 
-  test("recieved but missed", () => {
+  test("recieved and hit", () => {
     gameboard.receiveAttack([1, 1]);
     expect(ship.isSunk()).toBe(true);
   });
@@ -105,10 +105,14 @@ describe("All sunk test", () => {
   const gameboard = Gameboard(2);
   const ship_1 = Ship(1);
   const ship_2 = Ship(1);
-  gameboard.placeShip(ship_1, [0, 0]);
-  gameboard.placeShip(ship_2, [1, 1]);
 
-  test("none sunk", () => {
+  test("none placed", () => {
+    expect(gameboard.isAllSunk()).toBe(true);
+  });
+
+  test("place but none hit", () => {
+    gameboard.placeShip(ship_1, [0, 0]);
+    gameboard.placeShip(ship_2, [1, 1]);
     expect(gameboard.isAllSunk()).toBe(false);
   });
 
