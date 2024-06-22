@@ -125,4 +125,10 @@ describe("All sunk test", () => {
     gameboard.receiveAttack([1, 1]);
     expect(gameboard.isAllSunk()).toBe(true);
   });
+
+  test("add new ship, not sunk", () => {
+    const ship_3 = Ship(1);
+    gameboard.placeShip(ship_3, [1, 0]);
+    expect(gameboard.isAllSunk()).toBe(false);
+  })
 });
