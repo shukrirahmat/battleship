@@ -3,3 +3,26 @@
     padding: 0;
     margin: 0;
 }
+
+.header {
+    font-size: 40px;
+    text-align: center;
+    padding: 20px 20px;
+    background-color: blue;
+    color: white;
+}
+
+.main {
+    padding: 25px 0;
+    background-color: grey;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.boardContainer {
+    display: grid;
+    grid-template-columns: repeat(8, 50px);
+    grid-template-rows: repeat(8, 50px);
+    background-color: black;
+    border: 2px solid black;
+}

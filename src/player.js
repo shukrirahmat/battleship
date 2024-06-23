@@ -1,7 +1,7 @@
 import Gameboard from "./gameboard";
 
-function Player() {
-  const board = new Gameboard(8);
+function Player(boardsize) {
+  const board = new Gameboard(boardsize);
   const getBoard = () => board;
 
   return {
