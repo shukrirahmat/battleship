@@ -58,7 +58,12 @@ function Gameboard(size) {
     target.isHit = true;
   }
 
+  function getGrid([x, y]) {
+    return boardMatrix[x][y];
+  }
+
   return {
+    getGrid,
     placeShip,
     receiveAttack,
     isAllSunk

@@ -4,6 +4,10 @@
     margin: 0;
 }
 
+body {
+    height: 100vh;
+}
+
 .header {
     font-size: 40px;
     text-align: center;
@@ -17,12 +21,23 @@
     background-color: grey;
     display: flex;
     justify-content: space-evenly;
+    height: 100%;
 }
 
 .boardContainer {
+    height:fit-content;
     display: grid;
     grid-template-columns: repeat(8, 50px);
     grid-template-rows: repeat(8, 50px);
     background-color: black;
+    gap: 2px;
     border: 2px solid black;
+}
+
+.grid {
+    background-color: white;   
+}
+
+.occupied {
+    background-color: cornflowerblue;
 }
