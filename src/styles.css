@@ -35,9 +35,20 @@ body {
 }
 
 .grid {
-    background-color: white;   
+    background-color:antiquewhite; 
 }
 
 .occupied {
     background-color: cornflowerblue;
+}
+
+.gridButton {
+    background-color: white;
+    border: none;
+    width: 100%;
+    height: 100%;
+}
+
+.gridButton:hover {
+    background-color: lightgray;
 }
