@@ -1,6 +1,26 @@
 import Gameboard from "../gameboard.js";
 import Ship from "../ship.js";
 
+describe("accessing grid", () => {
+  const gameboard = Gameboard(2);
+
+  test("should get empty grid", () => {
+    expect(gameboard.getGrid([1,1])).toEqual({x:1, y:1, ship:null, isHit:false})
+  })
+
+  test("after placing ship", () => {
+    const ship = Ship(2);
+    gameboard.placeShip(ship, [0,1]);
+    expect(gameboard.getGrid([0,1]).ship).toBe(ship);
+    expect(gameboard.getGrid([1,1]).ship).toBe(ship);
+  })
+
+  test("still empty", () => {
+    expect(gameboard.getGrid([0,0]).ship).toBeNull();
+    expect(gameboard.getGrid([1,0]).ship).toBeNull();
+  })
+})
+
 describe("out of bound errors", () => {
   const gameboard = Gameboard(2);
 
