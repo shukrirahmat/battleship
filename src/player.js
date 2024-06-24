@@ -10,6 +10,7 @@ function Player(boardsize) {
 }
 
 function humanController(player) {
+
   function executeAttack([x, y], computer) {
     computer.getBoard().receiveAttack([x, y]);
     if (computer.getBoard().getGrid([x, y]).ship === null) {
@@ -28,10 +29,11 @@ function computerController(computer) {
     let y;
     let isTargetHit;
     let grid;
+    let size = player.getBoard().getSize();
 
     do {
-      x = Math.floor(Math.random() * 8);
-      y = Math.floor(Math.random() * 8);
+      x = Math.floor(Math.random() * size);
+      y = Math.floor(Math.random() * size);
       grid = player.getBoard().getGrid([x, y]);
 
       if (grid.isHit) {
@@ -65,4 +67,4 @@ function ComputerPlayer(boardsize) {
   };
 }
 
-export { HumanPlayer, ComputerPlayer };
+export { Player, HumanPlayer, ComputerPlayer };

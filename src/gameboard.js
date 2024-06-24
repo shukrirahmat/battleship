@@ -1,6 +1,7 @@
 function Gameboard(size) {
   let boardMatrix = createBoard();
   let shiplist = [];
+  let totalHit = 0;
 
   function createBoard() {
     let board = Array.from(Array(size), () => []);
@@ -55,6 +56,7 @@ function Gameboard(size) {
     let target = boardMatrix[x][y];
     if (target.isHit) throw new Error("Grid already hit");
     target.isHit = true;
+    totalHit++;
     if (target.ship !== null) {
       target.ship.hit();
       return true;
@@ -66,11 +68,21 @@ function Gameboard(size) {
     return boardMatrix[x][y];
   }
 
+  function getTotalHit() {
+    return totalHit;
+  }
+
+  function getSize() {
+    return size;
+  }
+
   return {
+    getSize,
     getGrid,
     placeShip,
     receiveAttack,
     isAllSunk,
+    getTotalHit
   };
 }
 

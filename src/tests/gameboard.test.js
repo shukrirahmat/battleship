@@ -152,3 +152,22 @@ describe("All sunk test", () => {
     expect(gameboard.isAllSunk()).toBe(false);
   })
 });
+
+describe("Total hit test", () => {
+
+  const gameboard = Gameboard(2);
+
+  test("hit none", () => {
+    expect(gameboard.getTotalHit()).toBe(0);
+  })
+
+  test("hit once", () => {
+    gameboard.receiveAttack([0, 0]);
+    expect(gameboard.getTotalHit()).toBe(1);
+  })
+
+  test("hit twice", () => {
+    gameboard.receiveAttack([1, 1]);
+    expect(gameboard.getTotalHit()).toBe(2);
+  })
+})

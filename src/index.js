@@ -74,5 +74,5 @@ function addAttackButtons(board, self, opponent) {
 }
 
 //TASKS NEXT:
-// 1) Hide the occupied tag to not allowed to see location
-// 2) Do enemy attack;
+// 1) Make separate Dom.js
+// 2) did gridHit display on each execute attack function;
