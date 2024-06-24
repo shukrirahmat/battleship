@@ -1,4 +1,4 @@
-import { Player, HumanPlayer } from "./player.js";
+import { HumanPlayer , ComputerPlayer } from "./player.js";
 import Ship from "./ship.js";
 import "./styles.css";
 
@@ -9,7 +9,7 @@ setUpNewGame();
 
 function setUpNewGame() {
   const human = new HumanPlayer(SIZE);
-  const computer = new Player(SIZE);
+  const computer = new ComputerPlayer(SIZE);
   populateShip(human, computer);
 
   const humanBoard = createBoard(human);
@@ -25,9 +25,9 @@ function populateShip(human, computer) {
   human.getBoard().placeShip(Ship(2), [2, 4]);
   human.getBoard().placeShip(Ship(3, true), [6, 3]);
 
-  computer.getBoard().placeShip(Ship(1), [1, 1]);
-  computer.getBoard().placeShip(Ship(2), [2, 4]);
-  computer.getBoard().placeShip(Ship(3, true), [6, 3]);
+  computer.getBoard().placeShip(Ship(1), [2, 1]);
+  computer.getBoard().placeShip(Ship(2), [3, 4]);
+  computer.getBoard().placeShip(Ship(3, true), [7, 3]);
 }
 
 function createBoard(player) {
@@ -51,18 +51,25 @@ function createBoard(player) {
 
 function addAttackButtons(board, self, opponent) {
   const grids = board.querySelectorAll(".grid");
-  grids.forEach((node, i) => {
+  grids.forEach((grid, i) => {
     const x = i % 8;
     const y = Math.floor(i / 8);
     const button = document.createElement("button");
     button.classList.add("gridButton");
+    grid.classList.remove("occupied");
 
     button.addEventListener("click", () => {
       opponent.executeAttack([x, y], self);
-      node.removeChild(node.firstChild);
+      grid.removeChild(grid.firstChild);
+      grid.textContent = "X";
+
+      if (self.getBoard().getGrid([x, y]).ship !== null) {
+        grid.classList.add("occupied");
+      }
+      
     });
 
-    node.appendChild(button);
+    grid.appendChild(button);
   });
 }
 

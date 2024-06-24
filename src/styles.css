@@ -35,7 +35,13 @@ body {
 }
 
 .grid {
-    background-color:antiquewhite; 
+    background-color: white;
+    font-size: 50px;
+    color: red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .occupied {

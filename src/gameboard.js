@@ -44,18 +44,22 @@ function Gameboard(size) {
   function isAllSunk() {
     if (shiplist.length === 0) return true;
 
-    let result = true
+    let result = true;
     shiplist.forEach((ship) => {
       if (!ship.isSunk()) result = false;
-    })
+    });
     return result;
   }
 
   function receiveAttack([x, y]) {
     let target = boardMatrix[x][y];
     if (target.isHit) throw new Error("Grid already hit");
-    if (target.ship !== null) target.ship.hit();
     target.isHit = true;
+    if (target.ship !== null) {
+      target.ship.hit();
+      return true;
+    }
+    return false;
   }
 
   function getGrid([x, y]) {
@@ -66,7 +70,7 @@ function Gameboard(size) {
     getGrid,
     placeShip,
     receiveAttack,
-    isAllSunk
+    isAllSunk,
   };
 }
 
