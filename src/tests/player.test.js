@@ -1,38 +1,34 @@
-import { Player, HumanPlayer, ComputerPlayer} from "../player.js";
-import Ship from "../ship.js";
+import { ComputerPlayer } from "../player.js";
 
-describe("human player attack", () => {
-  const human = HumanPlayer(2);
-  const enemy = Player(2);
-  enemy.getBoard().placeShip(Ship(1), [1, 1]);
+describe("computer choose", () => {
+  let computer = ComputerPlayer(2);
+  let hitList = [];
 
-  test("before attack", () => {
-    expect(enemy.getBoard().isAllSunk()).toBe(false);
-  })
-
-  test("after attack", () => {
-    human.executeAttack([1,1], enemy);
-    expect(enemy.getBoard().isAllSunk()).toBe(true);
+  test("choose once", () => {
+    hitList.push(computer.choose());
+    expect(hitList.length).toBe(1);
   });
+
+  test("choose twice", () => {
+    hitList.push(computer.choose());
+    expect(hitList.length).toBe(2);
+  });
+
+  test("chose 4 times", () => {
+    hitList.push(computer.choose());
+    hitList.push(computer.choose());
+    expect(hitList.length).toBe(4);
+  });
+
+  test("last is null", () => {
+    hitList.push(computer.choose());
+    expect(hitList.at(-1)).toBeNull();
+  });
+
+  test("others is truthy", () => {
+    expect(hitList.at(0)).toBeTruthy();
+    expect(hitList.at(1)).toBeTruthy();
+    expect(hitList.at(2)).toBeTruthy();
+    expect(hitList.at(3)).toBeTruthy();
+  })
 });
-
-describe("computer player attack", () => {
-  const computer = ComputerPlayer(2);
-  const enemy = Player(2);
-
-  test("attack once", () => {
-    computer.executeAttack(enemy);
-    expect(enemy.getBoard().getTotalHit()).toBe(1);
-  })
-
-  test("attack twice", () => {
-    computer.executeAttack(enemy);
-    expect(enemy.getBoard().getTotalHit()).toBe(2);
-  })
-
-  test("attack thrice", () => {
-    computer.executeAttack(enemy);
-    expect(enemy.getBoard().getTotalHit()).toBe(3);
-  })
-
-})
