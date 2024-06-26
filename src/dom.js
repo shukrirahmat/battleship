@@ -1,13 +1,9 @@
-import {Player, ComputerPlayer } from "./player.js";
+import { Player, ComputerPlayer } from "./player.js";
 import Ship from "./ship.js";
 
-const main = document.querySelector(".main");
-
 function Dom() {
+  const main = document.querySelector(".main");
   let boardsize;
-  let humanBoardNode;
-  let computerBoardNode;
-
 
   function setUpNewGame(size) {
     boardsize = size;
@@ -15,9 +11,9 @@ function Dom() {
     const computer = new ComputerPlayer(size);
     populateShip(human, computer);
 
-    humanBoardNode = createBoardNode(human);
-    computerBoardNode = createBoardNode(computer);
-    addAttackButtons(computer, human);
+    const humanBoardNode = createBoardNode(human);
+    const computerBoardNode = createBoardNode(computer);
+    addAttackButtons(computer, computerBoardNode, human, humanBoardNode);
 
     main.appendChild(humanBoardNode);
     main.appendChild(computerBoardNode);
@@ -52,8 +48,8 @@ function Dom() {
     return boardContainer;
   }
 
-  function addAttackButtons(computer, human) {
-    const grids = computerBoardNode.querySelectorAll(".grid");
+  function addAttackButtons(receiver, receiverNode, attacker, attackerNode) {
+    const grids = receiverNode.querySelectorAll(".grid");
     grids.forEach((grid, i) => {
       const x = i % 8;
       const y = Math.floor(i / 8);
@@ -62,22 +58,28 @@ function Dom() {
       grid.classList.remove("occupied");
 
       button.addEventListener("click", () => {
-        const shipHit = computer.getBoard().receiveAttack([x, y]);
+        const shipHit = receiver.getBoard().receiveAttack([x, y]);
+        grid.removeChild(grid.firstChild);
         markHit(grid);
-
         if (shipHit) grid.classList.add("occupied");
 
         if (!shipHit) {
-          let enemyHit;
-          let target;
+          disableButtonToggle(receiverNode);
+          let isAttackerHit;
+          let coordinate;
 
-          do {
-            target = computer.choose();
-            enemyHit = human.getBoard().receiveAttack(target);
-            const targetNode = findNode(humanBoardNode, target);
+          const counterAttack = setInterval(function() {
+            coordinate = receiver.choose();
+            isAttackerHit = attacker.getBoard().receiveAttack(coordinate);
+            console.log(isAttackerHit);
+            const targetNode = findNode(attackerNode, coordinate);
             markHit(targetNode);
-            
-          } while (enemyHit);
+
+            if (!isAttackerHit) {
+              disableButtonToggle(receiverNode);
+              clearInterval(counterAttack);
+            }
+          }, 1000);
         }
       });
 
@@ -85,15 +87,19 @@ function Dom() {
     });
   }
 
+  function disableButtonToggle(boardNode) {
+    const buttons = boardNode.querySelectorAll('button');
+    buttons.forEach((button) => {button.toggleAttribute("disabled")})
+  }
+
   function markHit(node) {
-    if (node.firstChild) node.removeChild(node.firstChild);
     node.textContent = "X";
   }
 
   function findNode(boardNode, target) {
     const grids = boardNode.querySelectorAll(".grid");
 
-    const nth = target[1]*boardsize + target[0];
+    const nth = target[1] * boardsize + target[0];
     return grids.item(nth);
   }
 
