@@ -68,10 +68,9 @@ function Dom() {
           let isAttackerHit;
           let coordinate;
 
-          const counterAttack = setInterval(function() {
+          const counterAttack = setInterval(function () {
             coordinate = receiver.choose();
             isAttackerHit = attacker.getBoard().receiveAttack(coordinate);
-            console.log(isAttackerHit);
             const targetNode = findNode(attackerNode, coordinate);
             markHit(targetNode);
 
@@ -88,12 +87,23 @@ function Dom() {
   }
 
   function disableButtonToggle(boardNode) {
-    const buttons = boardNode.querySelectorAll('button');
-    buttons.forEach((button) => {button.toggleAttribute("disabled")})
+    const buttons = boardNode.querySelectorAll("button");
+    buttons.forEach((button) => {
+      button.toggleAttribute("disabled");
+    });
   }
 
   function markHit(node) {
+    clearRecent();
     node.textContent = "X";
+    node.classList.add("recent");
+  }
+
+  function clearRecent() {
+    const grids = document.querySelectorAll(".grid");
+    grids.forEach((grid) => {
+      grid.classList.remove("recent");
+    });
   }
 
   function findNode(boardNode, target) {

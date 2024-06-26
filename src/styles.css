@@ -37,11 +37,16 @@ body {
 .grid {
     background-color: white;
     font-size: 50px;
-    color: red;
+    color: rgba(255, 0, 0, 0.3);
     display: flex;
     justify-content: center;
     align-items: center;
     font-family: Arial, Helvetica, sans-serif;
+}
+
+.recent {
+    color: red;
+    font-weight: bold;
 }
 
 .occupied {
