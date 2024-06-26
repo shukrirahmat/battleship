@@ -1,10 +1,12 @@
 import Gameboard from "./gameboard.js";
 
-function Player(boardsize) {
+function Player(boardsize, name="Player") {
   const board = new Gameboard(boardsize);
   const getBoard = () => board;
+  const getName = () => name;
 
   return {
+    getName,
     getBoard,
   };
 }
@@ -38,8 +40,8 @@ function computerController(computer) {
   };
 }
 
-function ComputerPlayer(boardsize) {
-  const computer = Player(boardsize);
+function ComputerPlayer(boardsize, name="Computer") {
+  const computer = Player(boardsize, name);
 
   return {
     ...computer,

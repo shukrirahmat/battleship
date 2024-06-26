@@ -3,6 +3,7 @@ import Ship from "./ship.js";
 
 function Dom() {
   const main = document.querySelector(".main");
+  const info = document.querySelector(".info");
   let boardsize;
 
   function setUpNewGame(size) {
@@ -58,38 +59,70 @@ function Dom() {
       grid.classList.remove("occupied");
 
       button.addEventListener("click", () => {
-        const shipHit = receiver.getBoard().receiveAttack([x, y]);
-        grid.removeChild(grid.firstChild);
-        markHit(grid);
-        if (shipHit) grid.classList.add("occupied");
-
-        if (!shipHit) {
-          disableButtonToggle(receiverNode);
-          let isAttackerHit;
-          let coordinate;
-
-          const counterAttack = setInterval(function () {
-            coordinate = receiver.choose();
-            isAttackerHit = attacker.getBoard().receiveAttack(coordinate);
-            const targetNode = findNode(attackerNode, coordinate);
-            markHit(targetNode);
-
-            if (!isAttackerHit) {
-              disableButtonToggle(receiverNode);
-              clearInterval(counterAttack);
-            }
-          }, 1000);
-        }
+        attackEvent(
+          [x, y],
+          grid,
+          receiver,
+          receiverNode,
+          attacker,
+          attackerNode
+        );
       });
 
       grid.appendChild(button);
     });
   }
 
-  function disableButtonToggle(boardNode) {
+  function attackEvent(
+    target,
+    gridNode,
+    receiver,
+    receiverNode,
+    attacker,
+    attackerNode
+  ) {
+    const shipHit = receiver.getBoard().receiveAttack(target);
+    gridNode.removeChild(gridNode.firstChild);
+    markHit(gridNode);
+    if (shipHit) {
+      gridNode.classList.add("occupied");
+      if (checkLose(receiver)) {
+        disableButtonToggle(receiverNode, false);
+        info.textContent = attacker.getName() + " wins!";
+      }
+    } else {
+      disableButtonToggle(receiverNode, false);
+      let isAttackerHit;
+      let coordinate;
+
+      const counterAttack = setInterval(function () {
+        coordinate = receiver.choose();
+        isAttackerHit = attacker.getBoard().receiveAttack(coordinate);
+        const targetNode = findNode(attackerNode, coordinate);
+        markHit(targetNode);
+
+        if (!isAttackerHit) {
+          disableButtonToggle(receiverNode, true);
+          clearInterval(counterAttack);
+        }
+
+        if (checkLose(attacker)) {
+          info.textContent = receiver.getName() + " wins!";
+          clearInterval(counterAttack);
+        }
+      }, 1000);
+    }
+  }
+
+  function checkLose(player) {
+    return player.getBoard().isAllSunk();
+  }
+
+  function disableButtonToggle(boardNode, mode) {
     const buttons = boardNode.querySelectorAll("button");
     buttons.forEach((button) => {
-      button.toggleAttribute("disabled");
+      if (mode) button.removeAttribute("disabled");
+      else button.setAttribute("disabled", "");
     });
   }
 
