@@ -65,7 +65,36 @@ function Gameboard(size) {
   }
 
   function getGrid([x, y]) {
+    if (x >= size || x < 0 || y >= size || y < 0) return null;
     return boardMatrix[x][y];
+  }
+
+  function isAreaClear([x, y]) {
+    if (getGrid([x, y]) === null) return false;
+
+    let result = true;
+    const operations = [
+      [-1, -1],
+      [0, -1],
+      [1, -1],
+      [-1, 0],
+      [0, 0],
+      [1, 0],
+      [-1, 1],
+      [0, 1],
+      [1, 1],
+    ];
+    operations.forEach((op) => {
+      const newX = x + op[0];
+      const newY = y + op[1];
+      if (newX < size && newX >= 0 && newY < size && newY >= 0) {
+        if (getGrid([newX, newY]).ship !== null) {
+          result = false;
+        }
+      }
+    });
+
+    return result;
   }
 
   function getTotalHit() {
@@ -82,7 +111,8 @@ function Gameboard(size) {
     placeShip,
     receiveAttack,
     isAllSunk,
-    getTotalHit
+    getTotalHit,
+    isAreaClear,
   };
 }
 

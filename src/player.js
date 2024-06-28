@@ -1,13 +1,17 @@
 import Gameboard from "./gameboard.js";
 
 function Player(boardsize, name="Player") {
-  const board = new Gameboard(boardsize);
+  let board = Gameboard(boardsize);
   const getBoard = () => board;
   const getName = () => name;
+  const resetBoard = () => {
+    board = Gameboard(boardsize);
+  }
 
   return {
     getName,
     getBoard,
+    resetBoard
   };
 }
 

@@ -6,11 +6,13 @@ function Dom() {
   const info = document.querySelector(".info");
   let boardsize;
 
-  function setUpNewGame(size) {
+  function setUpNewGame(size, shipsData) {
     boardsize = size;
     const human = new Player(size);
     const computer = new ComputerPlayer(size);
-    populateShip(human, computer);
+
+    populateShipRandomly(human, createShipList(shipsData));
+    populateShipRandomly(computer, createShipList(shipsData));
 
     const humanBoardNode = createBoardNode(human);
     const computerBoardNode = createBoardNode(computer);
@@ -18,6 +20,18 @@ function Dom() {
 
     main.appendChild(humanBoardNode);
     main.appendChild(computerBoardNode);
+  }
+
+  function createShipList(shipsData) {
+    const list = [];
+    shipsData.forEach((data) => {    
+      if (data[1]) {
+        list.push(Ship(data[0], data[1]));
+      } else {
+        list.push(Ship(data[0]));
+      }
+    })
+    return list;
   }
 
   function populateShip(human, computer) {
@@ -28,6 +42,57 @@ function Dom() {
     computer.getBoard().placeShip(Ship(1), [2, 1]);
     computer.getBoard().placeShip(Ship(2), [3, 4]);
     computer.getBoard().placeShip(Ship(3, true), [7, 3]);
+  }
+
+  function populateShipRandomly(player, shiplist) {
+    let allplaceable = true;
+    let tries = 0;
+
+    do {
+      player.resetBoard();
+      shiplist.forEach((ship) => {
+        let placement = randomlyPlaceShip(ship, player);
+        if (!placement) allplaceable = false;
+      })
+      tries++;
+      if (tries > 100) throw new Error ("Struggles to randomize ships, reduce it number or increase board size");
+    } while (!allplaceable);
+  }
+
+  function randomlyPlaceShip(ship, player) {
+    let tries = 0;
+    let board = player.getBoard();
+    let canPlace = false;
+    let x;
+    let y;
+
+    while (tries < 100) {
+      x = Math.floor(Math.random() * boardsize);
+      y = Math.floor(Math.random() * boardsize);
+
+      const shipCoordinates = [];
+      for (let i = 0; i < ship.getLength(); i++) {
+        if (ship.isVertical()) {
+          shipCoordinates.push([x, y + i]);
+        } else shipCoordinates.push([x + i, y]);
+      }
+
+      let alltrue = true;
+      shipCoordinates.forEach((sc) => {
+        if (!board.isAreaClear(sc)) {
+          alltrue = false;
+        }
+      });
+
+      if (alltrue) {
+        board.placeShip(ship, [x, y]);
+        canPlace = true;
+        break;
+      }
+      tries++;
+    }
+
+    return canPlace;
   }
 
   function createBoardNode(player) {
