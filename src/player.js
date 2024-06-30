@@ -18,19 +18,20 @@ function Player(boardsize, name = "Player") {
 function computerController(computer) {
   let size = computer.getBoard().getSize();
   let possibleTarget = setUpPossibleTarget();
+  let recentHits = [];
 
-  function choose(lastGridHit = null) {
+  function choose() {
     let choice = null;
     let index;
 
     if (possibleTarget.length === 0) return null;
-    if (lastGridHit) {
-      possibleTarget.forEach((target, i) => {
-        if (target[0] === lastGridHit[0] || target[1] === lastGridHit[1]) {
-          choice = target;
-          index = i;
-        }
-      });
+    if (recentHits.length > 0) {
+      const filteredTargets = figureOutNextHit();
+      if (filteredTargets.length > 0) {
+        const fIndex = Math.floor(Math.random() * filteredTargets.length);
+        choice = filteredTargets[fIndex];
+        index = possibleTarget.indexOf(choice);
+      }
     }
 
     if (choice === null) {
@@ -39,6 +40,41 @@ function computerController(computer) {
     }
     possibleTarget.splice(index, 1);
     return choice;
+  }
+
+  function figureOutNextHit() {
+    let choices;
+
+    if (recentHits.length === 1) {
+      choices = possibleTarget.filter((target) => {
+        let xdiff = Math.abs(target[0] - recentHits[0][0]);
+        let ydiff = Math.abs(target[1] - recentHits[0][1]);
+        return (xdiff === 1 && ydiff === 0) || (ydiff === 1 && xdiff === 0);
+      });
+    }
+
+    if (recentHits.length > 1) {
+
+      console.log("HERE THE PROBLEM");
+      console.log(recentHits);
+
+      if (recentHits[0][0] === recentHits[1][0]) {
+        choices = possibleTarget.filter((target) => {
+          const xdiff = target[0] === recentHits[0][0];
+          const ydiffstart = target[1] === (recentHits[0][1] - 1);
+          const ydiffend = target[1] === (recentHits.at(-1)[1] + 1);
+          return xdiff && (ydiffstart || ydiffend);
+        });
+      } else {
+        choices = possibleTarget.filter((target) => {
+          const ydiff = target[1] === recentHits[0][1];
+          const xdiffstart = target[0] === (recentHits[0][0] - 1);
+          const xdiffend = target[0] === (recentHits.at(-1)[0] + 1);
+          return ydiff && (xdiffstart || xdiffend);
+        });
+      }
+    }
+    return choices;
   }
 
   function setUpPossibleTarget() {
@@ -52,8 +88,18 @@ function computerController(computer) {
     return list;
   }
 
+  function addRecentHit(coordinate) {
+    recentHits.push(coordinate);
+  }
+
+  function clearRecentHit() {
+    recentHits = [];
+  }
+
   return {
     choose,
+    addRecentHit,
+    clearRecentHit
   };
 }
 

@@ -24,13 +24,13 @@ function Dom() {
 
   function createShipList(shipsData) {
     const list = [];
-    shipsData.forEach((data) => {    
+    shipsData.forEach((data) => {
       if (data[1]) {
         list.push(Ship(data[0], data[1]));
       } else {
         list.push(Ship(data[0]));
       }
-    })
+    });
     return list;
   }
 
@@ -53,9 +53,12 @@ function Dom() {
       shiplist.forEach((ship) => {
         let placement = randomlyPlaceShip(ship, player);
         if (!placement) allplaceable = false;
-      })
+      });
       tries++;
-      if (tries > 100) throw new Error ("Struggles to randomize ships, reduce it number or increase board size");
+      if (tries > 100)
+        throw new Error(
+          "Struggles to randomize ships, reduce it number or increase board size"
+        );
     } while (!allplaceable);
   }
 
@@ -114,8 +117,8 @@ function Dom() {
     return boardContainer;
   }
 
-  function addAttackButtons(receiver, receiverNode, attacker, attackerNode) {
-    const grids = receiverNode.querySelectorAll(".grid");
+  function addAttackButtons(computer, computerNode, human, humanNode) {
+    const grids = computerNode.querySelectorAll(".grid");
     grids.forEach((grid, i) => {
       const x = i % 8;
       const y = Math.floor(i / 8);
@@ -124,14 +127,7 @@ function Dom() {
       grid.classList.remove("occupied");
 
       button.addEventListener("click", () => {
-        attackEvent(
-          [x, y],
-          grid,
-          receiver,
-          receiverNode,
-          attacker,
-          attackerNode
-        );
+        attackEvent([x, y], grid, computer, computerNode, human, humanNode);
       });
 
       grid.appendChild(button);
@@ -141,38 +137,47 @@ function Dom() {
   function attackEvent(
     target,
     gridNode,
-    receiver,
-    receiverNode,
-    attacker,
-    attackerNode
+    computer,
+    computerNode,
+    human,
+    humanNode
   ) {
-    const shipHit = receiver.getBoard().receiveAttack(target);
+    const shipHit = computer.getBoard().receiveAttack(target);
     gridNode.removeChild(gridNode.firstChild);
     markHit(gridNode);
     if (shipHit) {
       gridNode.classList.add("occupied");
-      if (checkLose(receiver)) {
-        disableButtonToggle(receiverNode, false);
-        info.textContent = attacker.getName() + " wins!";
+      if (checkLose(computer)) {
+        disableButtonToggle(computerNode, false);
+        info.textContent = human.getName() + " wins!";
       }
     } else {
-      disableButtonToggle(receiverNode, false);
-      let isAttackerHit;
+      disableButtonToggle(computerNode, false);
+      let isHumanHit;
       let coordinate;
 
       const counterAttack = setInterval(function () {
-        coordinate = receiver.choose();
-        isAttackerHit = attacker.getBoard().receiveAttack(coordinate);
-        const targetNode = findNode(attackerNode, coordinate);
+        coordinate = computer.choose();
+        isHumanHit = human.getBoard().receiveAttack(coordinate);
+
+        if (isHumanHit) {
+          if (human.getBoard().getGrid(coordinate).ship.isSunk()) {
+            computer.clearRecentHit();
+          } else {
+            computer.addRecentHit(coordinate);
+          }
+        }
+
+        const targetNode = findNode(humanNode, coordinate);
         markHit(targetNode);
 
-        if (!isAttackerHit) {
-          disableButtonToggle(receiverNode, true);
+        if (!isHumanHit) {
+          disableButtonToggle(computerNode, true);
           clearInterval(counterAttack);
         }
 
-        if (checkLose(attacker)) {
-          info.textContent = receiver.getName() + " wins!";
+        if (checkLose(human)) {
+          info.textContent = computer.getName() + " wins!";
           clearInterval(counterAttack);
         }
       }, 1000);
