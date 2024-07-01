@@ -34,16 +34,6 @@ function Dom() {
     return list;
   }
 
-  function populateShip(human, computer) {
-    human.getBoard().placeShip(Ship(1), [1, 1]);
-    human.getBoard().placeShip(Ship(2), [2, 4]);
-    human.getBoard().placeShip(Ship(3, true), [6, 3]);
-
-    computer.getBoard().placeShip(Ship(1), [2, 1]);
-    computer.getBoard().placeShip(Ship(2), [3, 4]);
-    computer.getBoard().placeShip(Ship(3, true), [7, 3]);
-  }
-
   function populateShipRandomly(player, shiplist) {
     let allplaceable = true;
     let tries = 0;

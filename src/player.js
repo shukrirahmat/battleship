@@ -54,22 +54,21 @@ function computerController(computer) {
     }
 
     if (recentHits.length > 1) {
-
       console.log("HERE THE PROBLEM");
       console.log(recentHits);
 
       if (recentHits[0][0] === recentHits[1][0]) {
         choices = possibleTarget.filter((target) => {
           const xdiff = target[0] === recentHits[0][0];
-          const ydiffstart = target[1] === (recentHits[0][1] - 1);
-          const ydiffend = target[1] === (recentHits.at(-1)[1] + 1);
+          const ydiffstart = target[1] === recentHits[0][1] - 1;
+          const ydiffend = target[1] === recentHits.at(-1)[1] + 1;
           return xdiff && (ydiffstart || ydiffend);
         });
       } else {
         choices = possibleTarget.filter((target) => {
           const ydiff = target[1] === recentHits[0][1];
-          const xdiffstart = target[0] === (recentHits[0][0] - 1);
-          const xdiffend = target[0] === (recentHits.at(-1)[0] + 1);
+          const xdiffstart = target[0] === recentHits[0][0] - 1;
+          const xdiffend = target[0] === recentHits.at(-1)[0] + 1;
           return ydiff && (xdiffstart || xdiffend);
         });
       }
@@ -89,7 +88,17 @@ function computerController(computer) {
   }
 
   function addRecentHit(coordinate) {
-    recentHits.push(coordinate);
+    if (recentHits.length === 0) recentHits.push(coordinate);
+    else {
+      let end = recentHits.at(-1);
+      if (coordinate[0] === end[0]) {
+        if (coordinate[1] > end[1]) recentHits.push(coordinate);
+        else recentHits.unshift(coordinate);
+      } else {
+        if (coordinate[0] > end[0]) recentHits.push(coordinate);
+        else recentHits.unshift(coordinate);
+      }
+    }
   }
 
   function clearRecentHit() {
@@ -99,7 +108,7 @@ function computerController(computer) {
   return {
     choose,
     addRecentHit,
-    clearRecentHit
+    clearRecentHit,
   };
 }
 
