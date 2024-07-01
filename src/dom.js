@@ -91,11 +91,12 @@ function Dom() {
   function createBoardNode(player) {
     const boardContainer = document.createElement("div");
     boardContainer.classList.add("boardContainer");
+    boardContainer.style.cssText = `--boardsize: ${boardsize}`;
 
     for (let i = 0; i < boardsize * boardsize; i++) {
       const grid = document.createElement("div");
-      const x = i % 8;
-      const y = Math.floor(i / 8);
+      const x = i % boardsize;
+      const y = Math.floor(i / boardsize);
       grid.classList.add("grid");
 
       if (player.getBoard().getGrid([x, y]).ship !== null) {
@@ -110,8 +111,8 @@ function Dom() {
   function addAttackButtons(computer, computerNode, human, humanNode) {
     const grids = computerNode.querySelectorAll(".grid");
     grids.forEach((grid, i) => {
-      const x = i % 8;
-      const y = Math.floor(i / 8);
+      const x = i % boardsize;
+      const y = Math.floor(i / boardsize);
       const button = document.createElement("button");
       button.classList.add("gridButton");
       grid.classList.remove("occupied");

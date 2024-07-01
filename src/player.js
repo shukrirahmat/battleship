@@ -54,8 +54,6 @@ function computerController(computer) {
     }
 
     if (recentHits.length > 1) {
-      console.log("HERE THE PROBLEM");
-      console.log(recentHits);
 
       if (recentHits[0][0] === recentHits[1][0]) {
         choices = possibleTarget.filter((target) => {
