@@ -149,7 +149,7 @@ function Dom() {
     let isHumanHit;
     let coordinate;
 
-    const counterAttack = setInterval(function () {
+    const attack = setInterval(function () {
       coordinate = computer.choose();
       isHumanHit = human.getBoard().receiveAttack(coordinate);
 
@@ -166,12 +166,12 @@ function Dom() {
 
       if (!isHumanHit) {
         disableButtonToggle(computerBoardNode, true);
-        clearInterval(counterAttack);
+        clearInterval(attack);
       }
 
       if (checkLose(human)) {
         info.textContent = computer.getName() + " wins!";
-        clearInterval(counterAttack);
+        clearInterval(attack);
       }
     }, 1000);
   }
