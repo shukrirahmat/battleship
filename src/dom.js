@@ -5,18 +5,22 @@ function Dom() {
   const main = document.querySelector(".main");
   const info = document.querySelector(".info");
   let boardsize;
+  let human;
+  let computer;
+  let humanBoardNode;
+  let computerBoardNode;
 
   function setUpNewGame(size, shipsData) {
     boardsize = size;
-    const human = new Player(size);
-    const computer = new ComputerPlayer(size);
+    human = new Player(size);
+    computer = new ComputerPlayer(size);
 
     populateShipRandomly(human, createShipList(shipsData));
     populateShipRandomly(computer, createShipList(shipsData));
 
-    const humanBoardNode = createBoardNode(human);
-    const computerBoardNode = createBoardNode(computer);
-    addAttackButtons(computer, computerBoardNode, human, humanBoardNode);
+    humanBoardNode = createBoardNode(human);
+    computerBoardNode = createBoardNode(computer);
+    addAttackButtons(computerBoardNode);
 
     main.appendChild(humanBoardNode);
     main.appendChild(computerBoardNode);
@@ -108,8 +112,8 @@ function Dom() {
     return boardContainer;
   }
 
-  function addAttackButtons(computer, computerNode, human, humanNode) {
-    const grids = computerNode.querySelectorAll(".grid");
+  function addAttackButtons(boardNode) {
+    const grids = boardNode.querySelectorAll(".grid");
     grids.forEach((grid, i) => {
       const x = i % boardsize;
       const y = Math.floor(i / boardsize);
@@ -118,61 +122,58 @@ function Dom() {
       grid.classList.remove("occupied");
 
       button.addEventListener("click", () => {
-        attackEvent([x, y], grid, computer, computerNode, human, humanNode);
+        humanAttack([x, y], grid);
       });
 
       grid.appendChild(button);
     });
   }
 
-  function attackEvent(
-    target,
-    gridNode,
-    computer,
-    computerNode,
-    human,
-    humanNode
-  ) {
+  function humanAttack(target, gridNode) {
     const shipHit = computer.getBoard().receiveAttack(target);
     gridNode.removeChild(gridNode.firstChild);
     markHit(gridNode);
     if (shipHit) {
       gridNode.classList.add("occupied");
       if (checkLose(computer)) {
-        disableButtonToggle(computerNode, false);
+        disableButtonToggle(computerBoardNode, false);
         info.textContent = human.getName() + " wins!";
       }
     } else {
-      disableButtonToggle(computerNode, false);
-      let isHumanHit;
-      let coordinate;
-
-      const counterAttack = setInterval(function () {
-        coordinate = computer.choose();
-        isHumanHit = human.getBoard().receiveAttack(coordinate);
-
-        if (isHumanHit) {
-          if (human.getBoard().getGrid(coordinate).ship.isSunk()) {
-            computer.clearRecentHit();
-          } else {
-            computer.addRecentHit(coordinate);
-          }
-        }
-
-        const targetNode = findNode(humanNode, coordinate);
-        markHit(targetNode);
-
-        if (!isHumanHit) {
-          disableButtonToggle(computerNode, true);
-          clearInterval(counterAttack);
-        }
-
-        if (checkLose(human)) {
-          info.textContent = computer.getName() + " wins!";
-          clearInterval(counterAttack);
-        }
-      }, 1000);
+      computerAttack();
     }
+  }
+
+  function computerAttack() {
+    disableButtonToggle(computerBoardNode, false);
+    let isHumanHit;
+    let coordinate;
+
+    const counterAttack = setInterval(function () {
+      coordinate = computer.choose();
+      isHumanHit = human.getBoard().receiveAttack(coordinate);
+
+      if (isHumanHit) {
+        if (human.getBoard().getGrid(coordinate).ship.isSunk()) {
+          computer.clearRecentHit();
+        } else {
+          computer.addRecentHit(coordinate);
+        }
+      }
+
+      const targetNode = findNode(humanBoardNode, coordinate);
+      markHit(targetNode);
+
+      if (!isHumanHit) {
+        disableButtonToggle(computerBoardNode, true);
+        clearInterval(counterAttack);
+      }
+
+      if (checkLose(human)) {
+        info.textContent = computer.getName() + " wins!";
+        clearInterval(counterAttack);
+      }
+    }, 1000);
   }
 
   function checkLose(player) {
