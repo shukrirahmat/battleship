@@ -4,6 +4,8 @@ import Ship from "./ship.js";
 function Dom() {
   const main = document.querySelector(".main");
   const info = document.querySelector(".info");
+  const rightbox = document.querySelector(".rightbox");
+  const leftbox = document.querySelector(".leftbox");
   let boardsize;
   let human;
   let computer;
@@ -12,28 +14,46 @@ function Dom() {
 
   function setUpNewGame(size, shipsData) {
     boardsize = size;
+
     human = new Player(size);
-    computer = new ComputerPlayer(size);
-
-    populateShipRandomly(human, createShipList(shipsData));
-    populateShipRandomly(computer, createShipList(shipsData));
-
+    populateShipRandomly(human, createRandomShipList(shipsData));
     humanBoardNode = createBoardNode(human);
+    rightbox.appendChild(humanBoardNode);
+
+    const placementDiv = document.createElement('div');
+    placementDiv.classList.add("placement");
+
+    const randomizebtn = document.createElement('button');
+    randomizebtn.textContent = "RANDOMIZE";
+    randomizebtn.addEventListener('click', () => {
+      rightbox.removeChild(humanBoardNode);
+      populateShipRandomly(human, createRandomShipList(shipsData));
+      humanBoardNode = createBoardNode(human);
+      rightbox.appendChild(humanBoardNode);
+    })
+    placementDiv.appendChild(randomizebtn);
+
+    leftbox.appendChild(placementDiv);
+
+
+
+    /*
+    computer = new ComputerPlayer(size);
+    populateShipRandomly(computer, createRandomShipList(shipsData));
     computerBoardNode = createBoardNode(computer);
     addAttackButtons(computerBoardNode);
 
     main.appendChild(humanBoardNode);
     main.appendChild(computerBoardNode);
+    */
   }
 
-  function createShipList(shipsData) {
+  function createRandomShipList(shipsData) {
     const list = [];
     shipsData.forEach((data) => {
-      if (data[1]) {
-        list.push(Ship(data[0], data[1]));
-      } else {
-        list.push(Ship(data[0]));
-      }
+      const chance = Math.random();
+      if (chance > 0.5) list.push(Ship(data));
+      else list.push(Ship(data,true));
     });
     return list;
   }
@@ -149,7 +169,7 @@ function Dom() {
     let isHumanHit;
     let coordinate;
 
-    const attack = setInterval(function () {
+    const attackLoop = setInterval(function () {
       coordinate = computer.choose();
       isHumanHit = human.getBoard().receiveAttack(coordinate);
 
@@ -166,12 +186,12 @@ function Dom() {
 
       if (!isHumanHit) {
         disableButtonToggle(computerBoardNode, true);
-        clearInterval(attack);
+        clearInterval(attackLoop);
       }
 
       if (checkLose(human)) {
         info.textContent = computer.getName() + " wins!";
-        clearInterval(attack);
+        clearInterval(attackLoop);
       }
     }, 1000);
   }
