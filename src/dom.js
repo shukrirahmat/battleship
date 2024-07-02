@@ -4,8 +4,6 @@ import Ship from "./ship.js";
 function Dom() {
   const main = document.querySelector(".main");
   const info = document.querySelector(".info");
-  const rightbox = document.querySelector(".rightbox");
-  const leftbox = document.querySelector(".leftbox");
   let boardsize;
   let human;
   let computer;
@@ -18,34 +16,40 @@ function Dom() {
     human = new Player(size);
     populateShipRandomly(human, createRandomShipList(shipsData));
     humanBoardNode = createBoardNode(human);
-    rightbox.appendChild(humanBoardNode);
+    main.appendChild(humanBoardNode);
 
-    const placementDiv = document.createElement('div');
-    placementDiv.classList.add("placement");
-
-    const randomizebtn = document.createElement('button');
-    randomizebtn.textContent = "RANDOMIZE";
-    randomizebtn.addEventListener('click', () => {
-      rightbox.removeChild(humanBoardNode);
-      populateShipRandomly(human, createRandomShipList(shipsData));
-      humanBoardNode = createBoardNode(human);
-      rightbox.appendChild(humanBoardNode);
-    })
-    placementDiv.appendChild(randomizebtn);
-
-    leftbox.appendChild(placementDiv);
-
-
-
-    /*
     computer = new ComputerPlayer(size);
     populateShipRandomly(computer, createRandomShipList(shipsData));
     computerBoardNode = createBoardNode(computer);
     addAttackButtons(computerBoardNode);
-
-    main.appendChild(humanBoardNode);
     main.appendChild(computerBoardNode);
-    */
+    disableButtonToggle(computerBoardNode, false);
+
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("btncontainer");
+
+    const explanation = document.createElement("p");
+    explanation.textContent =
+      "Click RANDOMIZE to reshuffle your ships or START to begin.";
+
+    const randomizebtn = document.createElement("button");
+    randomizebtn.textContent = "RANDOMIZE";
+    randomizebtn.addEventListener("click", () => {
+      main.removeChild(humanBoardNode);
+      populateShipRandomly(human, createRandomShipList(shipsData));
+      humanBoardNode = createBoardNode(human);
+      main.insertBefore(humanBoardNode, computerBoardNode);
+    });
+
+    const startbtn = document.createElement("button");
+    startbtn.textContent = "START";
+    startbtn.addEventListener("click", humanReady);
+
+    buttonContainer.appendChild(randomizebtn);
+    buttonContainer.appendChild(startbtn);
+
+    info.appendChild(explanation);
+    info.appendChild(buttonContainer);
   }
 
   function createRandomShipList(shipsData) {
@@ -53,7 +57,7 @@ function Dom() {
     shipsData.forEach((data) => {
       const chance = Math.random();
       if (chance > 0.5) list.push(Ship(data));
-      else list.push(Ship(data,true));
+      else list.push(Ship(data, true));
     });
     return list;
   }
@@ -149,15 +153,36 @@ function Dom() {
     });
   }
 
+  function highlightBoard(player) {
+    if (player === computer) {
+      computerBoardNode.classList.add("highlight");
+      humanBoardNode.classList.remove("highlight");
+    }
+    if (player === human) {
+      computerBoardNode.classList.remove("highlight");
+      humanBoardNode.classList.add("highlight");
+    }
+  }
+
+  function humanReady() {
+    while (info.firstChild) {
+      info.removeChild(info.firstChild);
+    }
+    disableButtonToggle(computerBoardNode, true);
+    highlightBoard(computer);
+    info.textContent = "Your move";
+  }
+
   function humanAttack(target, gridNode) {
     const shipHit = computer.getBoard().receiveAttack(target);
     gridNode.removeChild(gridNode.firstChild);
     markHit(gridNode);
     if (shipHit) {
+      info.textContent = "Hit! you can attack again";
       gridNode.classList.add("occupied");
       if (checkLose(computer)) {
         disableButtonToggle(computerBoardNode, false);
-        info.textContent = human.getName() + " wins!";
+        info.textContent = "You win!";
       }
     } else {
       computerAttack();
@@ -165,6 +190,8 @@ function Dom() {
   }
 
   function computerAttack() {
+    highlightBoard(human);
+    info.textContent = `${computer.getName()} is attacking...`;
     disableButtonToggle(computerBoardNode, false);
     let isHumanHit;
     let coordinate;
@@ -174,6 +201,7 @@ function Dom() {
       isHumanHit = human.getBoard().receiveAttack(coordinate);
 
       if (isHumanHit) {
+        info.textContent = `Hit! ${computer.getName()} is making another attack...`;
         if (human.getBoard().getGrid(coordinate).ship.isSunk()) {
           computer.clearRecentHit();
         } else {
@@ -187,6 +215,8 @@ function Dom() {
       if (!isHumanHit) {
         disableButtonToggle(computerBoardNode, true);
         clearInterval(attackLoop);
+        highlightBoard(computer);
+        info.textContent = "Your move";
       }
 
       if (checkLose(human)) {
