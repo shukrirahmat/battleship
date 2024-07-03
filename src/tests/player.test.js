@@ -75,3 +75,17 @@ describe("choose depending on recent hit", () => {
     expect(pos).toBe(true);
   });
 });
+
+describe("test filtering possible target", () => {
+  const computer = ComputerPlayer(3);
+
+  test("should only choose from first column", () => {
+
+    computer.filterSunkShipArea([[2,0], [2,1]]);
+    const choice = computer.choose();
+    const pos1 = choice[0] === 0 && choice[1] === 0;
+    const pos2 = choice[0] === 0 && choice[1] === 1;
+    const pos3 = choice[0] === 0 && choice[1] === 2;
+    expect(pos1 || pos2 || pos3).toBe(true);
+  })
+})

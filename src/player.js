@@ -24,7 +24,9 @@ function computerController(computer) {
     let choice = null;
     let index;
 
-    if (possibleTarget.length === 0) return null;
+    if (possibleTarget.length === 0) {
+      throw new Error ("no possible moves for computer, should not happen before the game is over")
+    };
     if (recentHits.length > 0) {
       const filteredTargets = figureOutNextHit();
       if (filteredTargets.length > 0) {
@@ -54,7 +56,6 @@ function computerController(computer) {
     }
 
     if (recentHits.length > 1) {
-
       if (recentHits[0][0] === recentHits[1][0]) {
         choices = possibleTarget.filter((target) => {
           const xdiff = target[0] === recentHits[0][0];
@@ -85,6 +86,22 @@ function computerController(computer) {
     return list;
   }
 
+  function filterSunkShipArea(coordinates) {
+    const xstart = coordinates.at(0)[0] - 1;
+    const xend = coordinates.at(-1)[0] + 1;
+    const ystart = coordinates.at(0)[1] - 1;
+    const yend = coordinates.at(-1)[1] + 1;
+
+    possibleTarget = possibleTarget.filter((target) => {
+      const withinrange =
+        target[0] >= xstart &&
+        target[0] <= xend &&
+        target[1] >= ystart &&
+        target[1] <= yend;
+      return (!withinrange);
+    });
+  }
+
   function addRecentHit(coordinate) {
     if (recentHits.length === 0) recentHits.push(coordinate);
     else {
@@ -107,6 +124,7 @@ function computerController(computer) {
     choose,
     addRecentHit,
     clearRecentHit,
+    filterSunkShipArea
   };
 }
 

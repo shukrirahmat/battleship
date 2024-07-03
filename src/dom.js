@@ -182,8 +182,8 @@ function Dom() {
       gridNode.classList.add("occupied");
 
       if (computer.getBoard().getGrid(target).ship.isSunk()) {
-        const ship = computer.getBoard().getGrid(target).ship
-        colorSunkShip(computer, ship);
+        const sunkenShip = computer.getBoard().getGrid(target).ship
+        colorSunkShip(computerBoardNode, sunkenShip);
         info.textContent = "Ship sunk! you can attack again";
       }
 
@@ -210,6 +210,12 @@ function Dom() {
       if (isHumanHit) {
         info.textContent = `Hit! ${computer.getName()} is making another attack...`;
         if (human.getBoard().getGrid(coordinate).ship.isSunk()) {
+
+          const sunkenShip = human.getBoard().getGrid(coordinate).ship;
+          colorSunkShip(humanBoardNode, sunkenShip);
+          info.textContent = `Ship sunk! ${computer.getName()} is making another attack...`;
+
+          computer.filterSunkShipArea(sunkenShip.getCoordinates());
           computer.clearRecentHit();
         } else {
           computer.addRecentHit(coordinate);
@@ -233,7 +239,12 @@ function Dom() {
     }, 1000);
   }
 
-  function colorSunkShip(player, ship) {
+  function colorSunkShip(boardNode, ship) {
+    let coordinates = ship.getCoordinates();
+    coordinates.forEach(coordinate => {
+      const node = findNode(boardNode, coordinate);
+      node.classList.add("sunk");
+    })
   }
 
   function checkLose(player) {
