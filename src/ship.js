@@ -1,5 +1,6 @@
 function Ship(length, vertical = false) {
   let hitsTaken = 0;
+  let coordinates;
 
   function hit() {
     hitsTaken++;
@@ -17,11 +18,21 @@ function Ship(length, vertical = false) {
     return length;
   }
 
+  function setCoordinates(list) {
+    coordinates = list;
+  }
+
+  function getCoordinates() {
+    return coordinates;
+  }
+
   return {
     getLength,
     hit,
     isSunk,
-    isVertical
+    isVertical,
+    setCoordinates,
+    getCoordinates
   };
 }
 

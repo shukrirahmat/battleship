@@ -180,6 +180,13 @@ function Dom() {
     if (shipHit) {
       info.textContent = "Hit! you can attack again";
       gridNode.classList.add("occupied");
+
+      if (computer.getBoard().getGrid(target).ship.isSunk()) {
+        const ship = computer.getBoard().getGrid(target).ship
+        colorSunkShip(computer, ship);
+        info.textContent = "Ship sunk! you can attack again";
+      }
+
       if (checkLose(computer)) {
         disableButtonToggle(computerBoardNode, false);
         info.textContent = "You win!";
@@ -224,6 +231,9 @@ function Dom() {
         clearInterval(attackLoop);
       }
     }, 1000);
+  }
+
+  function colorSunkShip(player, ship) {
   }
 
   function checkLose(player) {

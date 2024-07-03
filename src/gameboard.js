@@ -39,6 +39,7 @@ function Gameboard(size) {
     }
 
     locations.forEach((l) => (boardMatrix[l[0]][l[1]].ship = ship));
+    ship.setCoordinates(locations);
     shiplist.push(ship);
   }
 
