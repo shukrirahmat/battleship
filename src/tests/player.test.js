@@ -21,8 +21,7 @@ describe("computer choose", () => {
   });
 
   test("last is null", () => {
-    hitList.push(computer.choose());
-    expect(hitList.at(-1)).toBeNull();
+    expect(() => computer.choose()).toThrow();
   });
 
   test("others is truthy", () => {
