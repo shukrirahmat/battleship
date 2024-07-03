@@ -1,3 +1,3 @@
-# template-repo
+# BATTLESHIP
 
-Template for starting a project
+A simple battleship game against a computer controlled opponent.
